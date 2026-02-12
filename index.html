@@ -1,273 +1,1681 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Documove - Agent Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
-.header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-.header h1 { font-size: 1.5rem; }
-.header .user-info { display: flex; align-items: center; gap: 1rem; }
-.header .user-info span { font-size: 0.9rem; opacity: 0.8; }
-.header button { background: #e94560; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
-.header button:hover { background: #c73e55; }
-
-/* Login Page */
-.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-.login-box { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 420px; }
-.login-box h2 { text-align: center; margin-bottom: 0.5rem; color: #1a1a2e; font-size: 1.8rem; }
-.login-box .subtitle { text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
-.form-group { margin-bottom: 1.2rem; }
-.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; color: #444; font-size: 0.9rem; }
-.form-group input { width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
-.form-group input:focus { outline: none; border-color: #e94560; }
-.btn-login { width: 100%; padding: 0.85rem; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-.btn-login:hover { background: #c73e55; }
-.btn-login:disabled { background: #ccc; cursor: not-allowed; }
-.error-msg { color: #e94560; text-align: center; margin-top: 1rem; font-size: 0.9rem; display: none; }
-.logo { text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; }
-
-/* Dashboard */
-.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-.stat-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-.stat-card h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
-.stat-card .value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
-.stat-card .change { font-size: 0.85rem; color: #27ae60; margin-top: 0.3rem; }
-
-.section-title { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; }
-.properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
-.property-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
-.property-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-.property-image { height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; }
-.property-details { padding: 1.25rem; }
-.property-details h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: #1a1a2e; }
-.property-details .address { color: #666; font-size: 0.9rem; margin-bottom: 0.8rem; }
-.property-details .meta { display: flex; gap: 1rem; font-size: 0.85rem; color: #888; }
-.property-details .price { font-size: 1.3rem; font-weight: 700; color: #e94560; margin-top: 0.8rem; }
-.property-details .status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; }
-.status-active { background: #e8f5e9; color: #2e7d32; }
-.status-pending { background: #fff3e0; color: #ef6c00; }
-.status-sold { background: #fce4ec; color: #c62828; }
-
-.empty-state { text-align: center; padding: 4rem 2rem; color: #888; }
-.empty-state .icon { font-size: 4rem; margin-bottom: 1rem; }
-.hidden { display: none !important; }
-.loading { text-align: center; padding: 2rem; color: #888; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>documove - Stop Chasing. Start Earning. | For UK Estate Agents</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00D9B5;
+            --primary-dark: #00BFA0;
+            --navy: #0F1419;
+            --navy-light: #1A2332;
+            --navy-lighter: #2A3544;
+            --text: #FFFFFF;
+            --text-muted: #A0AEC0;
+            --accent-yellow: #FFB800;
+            --accent-red: #FF4458;
+        }
+        
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .app {
+            min-height: 100vh;
+        }
+        
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 20, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+        
+        .logo-icons {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .logo-text .co-uk {
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .login-btn {
+            background: var(--primary);
+            color: var(--navy);
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .login-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 217, 181, 0.3);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 140px 2rem 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .hero-eyebrow {
+            color: var(--accent-red);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.8s ease-out 0.2s backwards;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.8s ease-out 0.3s backwards;
+        }
+        
+        .hero-subhead {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            color: var(--text);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+        
+        .hero-tagline {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease-out 0.5s backwards;
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--navy);
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 217, 181, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            padding: 1.2rem 2.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid var(--navy-lighter);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .hero-note {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            animation: fadeInUp 0.8s ease-out 0.7s backwards;
+        }
+        
+        .hero-note strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        /* Dashboard Preview */
+        .dashboard-preview {
+            animation: fadeInRight 0.8s ease-out 0.4s backwards;
+        }
+        
+        .dashboard-preview-label {
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.8s ease-out 0.5s backwards;
+        }
+        
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 217, 181, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .preview-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .browser-chrome {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .browser-dots {
+            display: flex;
+            gap: 0.4rem;
+        }
+        
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot-red { background: #FF5F56; }
+        .dot-yellow { background: #FFBD2E; }
+        .dot-green { background: #27C93F; }
+        
+        .browser-url {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+        }
+        
+        .dashboard-frame {
+            height: 550px;
+            border: none;
+            width: 100%;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        
+        .live-badge {
+            background: rgba(0, 217, 181, 0.2);
+            color: var(--primary);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        
+        .transaction {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .transaction:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 217, 181, 0.3);
+            transform: translateX(4px);
+        }
+        
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .transaction-address {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .transaction-price {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .status-progress {
+            background: rgba(255, 184, 0, 0.2);
+            color: var(--accent-yellow);
+        }
+        
+        .status-complete {
+            background: rgba(0, 217, 181, 0.2);
+            color: var(--primary);
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            opacity: 0;
+            animation: fadeInTask 0.5s ease-out forwards;
+        }
+        
+        .task:nth-child(1) { animation-delay: 0.1s; }
+        .task:nth-child(2) { animation-delay: 0.2s; }
+        .task:nth-child(3) { animation-delay: 0.3s; }
+        .task:nth-child(4) { animation-delay: 0.4s; }
+        .task:nth-child(5) { animation-delay: 0.5s; }
+        .task:nth-child(6) { animation-delay: 0.6s; }
+        
+        .task-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        
+        .task-complete {
+            color: var(--primary);
+        }
+        
+        .task-pending {
+            color: var(--text-muted);
+        }
+        
+        .task-text {
+            color: var(--text-muted);
+        }
+        
+        /* Pain Section */
+        .pain-section {
+            padding: 100px 2rem;
+            background: var(--navy-light);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .pain-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-eyebrow {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+        
+        /* Features Grid */
+        .features-section {
+            padding: 100px 2rem;
+            background: var(--navy-light);
+        }
+        
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--navy);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 217, 181, 0.2);
+        }
+        
+        .feature-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(0, 217, 181, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .pain-card {
+            background: var(--navy);
+            border: 1px solid rgba(255, 68, 88, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .pain-card:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 68, 88, 0.2);
+        }
+        
+        .pain-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 1.5rem;
+            color: var(--accent-red);
+        }
+        
+        .pain-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .pain-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* Solution Section */
+        .solution-section {
+            padding: 120px 2rem;
+            background: var(--navy);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .solution-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 217, 181, 0.05) 0%, transparent 70%);
+        }
+        
+        .solution-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .solution-header {
+            margin-bottom: 5rem;
+        }
+        
+        .solution-header h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .solution-header p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .solution-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+        
+        .solution-step {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .solution-step:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0, 217, 181, 0.2);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--navy);
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        
+        .solution-step h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .solution-step p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        
+        /* Solicitors Section */
+        .solicitors-section {
+            padding: 120px 2rem;
+            background: var(--navy);
+        }
+        
+        .solicitors-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .solicitors-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+        
+        .solicitors-text h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .solicitors-text p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .solicitors-text .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .solicitors-benefits {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+        
+        .solicitors-benefits h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+        
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+        
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .benefit-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .benefit-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 100px 2rem;
+            background: var(--navy-light);
+        }
+        
+        .stats-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 120px 2rem;
+            background: var(--navy);
+        }
+        
+        .testimonials-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+        
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0, 217, 181, 0.15);
+        }
+        
+        .testimonial-quote {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+        
+        .testimonial-author {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            font-size: 1.05rem;
+        }
+        
+        .testimonial-role {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        
+        .testimonial-impact {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 120px 2rem;
+            background: var(--navy-light);
+        }
+        
+        .cta-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .cta-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .cta-text {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-note {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        
+        .cta-note strong {
+            color: var(--primary);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--navy);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 4rem 2rem 2rem;
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .footer-tagline {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .footer-section h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInTask {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding: 120px 1.5rem 80px;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .pain-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .solution-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .solicitors-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: var(--navy);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                display: none;
+            }
+            
+            .nav-links.mobile-open {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-subhead {
+                font-size: 1.2rem;
+            }
+            
+            .cta-group {
+                flex-direction: column;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 3rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .money-text h2 {
+                font-size: 2.5rem;
+            }
+            
+            .cta-title {
+                font-size: 2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!-- Login Page -->
-<div id="loginPage" class="login-container">
-<div class="login-box">
-<div class="logo">&#127968;</div>
-<h2>Documove</h2>
-<p class="subtitle">Agent Dashboard - Sign In</p>
-<form id="loginForm">
-<div class="form-group">
-<label for="email">Email Address</label>
-<input type="email" id="email" placeholder="agent@company.com" required>
-</div>
-<div class="form-group">
-<label for="password">Password</label>
-<input type="password" id="password" placeholder="Enter your password" required>
-</div>
-<button type="submit" class="btn-login" id="loginBtn">Sign In</button>
-<p class="error-msg" id="errorMsg"></p>
-</form>
-</div>
-</div>
-
-<!-- Dashboard -->
-<div id="dashboardPage" class="hidden">
-<header class="header">
-<h1>&#127968; Documove</h1>
-<div class="user-info">
-<span id="userEmail"></span>
-<span id="userAgency"></span>
-<button onclick="handleLogout()">Sign Out</button>
-</div>
-</header>
-
-<div class="container">
-<div class="stats-grid">
-<div class="stat-card">
-<h3>Total Properties</h3>
-<div class="value" id="totalProperties">0</div>
-</div>
-<div class="stat-card">
-<h3>Active Listings</h3>
-<div class="value" id="activeListings">0</div>
-</div>
-<div class="stat-card">
-<h3>Pending</h3>
-<div class="value" id="pendingCount">0</div>
-</div>
-<div class="stat-card">
-<h3>Completed</h3>
-<div class="value" id="completedCount">0</div>
-</div>
-</div>
-
-<h2 class="section-title">Your Properties</h2>
-<div id="propertiesList" class="properties-grid">
-<div class="loading">Loading properties...</div>
-</div>
-</div>
-</div>
-
-<script>
-// Supabase Configuration
-const SUPABASE_URL = 'https://hvbhmsybnhowczokidnc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2Ymhtc3libmhvd2N6b2tpZG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI2NTAsImV4cCI6MjA4NjQ5ODY1MH0.60TDi3r-vRhXwnWXH_JY7e5mKZ9GbaHI14cLYowZReA';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// DOM Elements
-const loginPage = document.getElementById('loginPage');
-const dashboardPage = document.getElementById('dashboardPage');
-const loginForm = document.getElementById('loginForm');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const loginBtn = document.getElementById('loginBtn');
-const errorMsg = document.getElementById('errorMsg');
-const userEmailSpan = document.getElementById('userEmail');
-const userAgencySpan = document.getElementById('userAgency');
-const propertiesList = document.getElementById('propertiesList');
-
-// Check for existing session on load
-async function checkSession() {
-const { data: { session } } = await supabase.auth.getSession();
-if (session) {
-await showDashboard(session.user);
-}
-}
-checkSession();
-
-// Login Handler
-loginForm.addEventListener('submit', async (e) => {
-e.preventDefault();
-loginBtn.disabled = true;
-loginBtn.textContent = 'Signing in...';
-errorMsg.style.display = 'none';
-
-try {
-const { data, error } = await supabase.auth.signInWithPassword({
-email: emailInput.value,
-password: passwordInput.value
-});
-
-if (error) throw error;
-await showDashboard(data.user);
-} catch (error) {
-errorMsg.textContent = error.message;
-errorMsg.style.display = 'block';
-} finally {
-loginBtn.disabled = false;
-loginBtn.textContent = 'Sign In';
-}
-});
-
-// Show Dashboard
-async function showDashboard(user) {
-loginPage.classList.add('hidden');
-dashboardPage.classList.remove('hidden');
-userEmailSpan.textContent = user.email;
-
-// Load profile
-try {
-const { data: profile } = await supabase
-.from('profiles')
-.select('*')
-.eq('id', user.id)
-.single();
-
-if (profile && profile.agency_name) {
-userAgencySpan.textContent = '| ' + profile.agency_name;
-}
-} catch (e) {
-console.log('Profile load error:', e);
-}
-
-// Load properties
-await loadProperties(user.id);
-}
-
-// Load Properties
-async function loadProperties(userId) {
-try {
-const { data: properties, error } = await supabase
-.from('properties')
-.select('*')
-.eq('agent_id', userId)
-.order('created_at', { ascending: false });
-
-if (error) throw error;
-
-// Update stats
-const total = properties ? properties.length : 0;
-const active = properties ? properties.filter(p => p.status === 'active').length : 0;
-const pending = properties ? properties.filter(p => p.status === 'pending' || p.status === 'under_offer').length : 0;
-const completed = properties ? properties.filter(p => p.status === 'sold' || p.status === 'completed').length : 0;
-
-document.getElementById('totalProperties').textContent = total;
-document.getElementById('activeListings').textContent = active;
-document.getElementById('pendingCount').textContent = pending;
-document.getElementById('completedCount').textContent = completed;
-
-// Render properties
-if (!properties || properties.length === 0) {
-propertiesList.innerHTML = '<div class="empty-state"><div class="icon">&#128204;</div><h3>No Properties Yet</h3><p>Properties assigned to your account will appear here.</p></div>';
-return;
-}
-
-propertiesList.innerHTML = properties.map(property => {
-const statusClass = property.status === 'active' ? 'status-active' : property.status === 'sold' || property.status === 'completed' ? 'status-sold' : 'status-pending';
-const price = property.price ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(property.price) : 'Price TBC';
-const bedrooms = property.bedrooms ? property.bedrooms + ' bed' : '';
-const bathrooms = property.bathrooms ? property.bathrooms + ' bath' : '';
-const propertyType = property.property_type || 'Residential';
-
-return `
-<div class="property-card">
-<div class="property-image">${getPropertyIcon(property.property_type)}</div>
-<div class="property-details">
-<h3>${property.address_line1 || 'Property'}</h3>
-<p class="address">${[property.address_line2, property.city, property.postcode].filter(Boolean).join(', ')}</p>
-<div class="meta">
-<span>${propertyType}</span>
-${bedrooms ? '<span>' + bedrooms + '</span>' : ''}
-${bathrooms ? '<span>' + bathrooms + '</span>' : ''}
-</div>
-<div class="price">${price}</div>
-<span class="status ${statusClass}">${(property.status || 'active').replace('_', ' ').toUpperCase()}</span>
-</div>
-</div>`;
-}).join('');
-
-} catch (error) {
-console.error('Error loading properties:', error);
-propertiesList.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Error Loading Properties</h3><p>' + error.message + '</p></div>';
-}
-}
-
-function getPropertyIcon(type) {
-const icons = { 'house': '&#127968;', 'flat': '&#127970;', 'apartment': '&#127970;', 'bungalow': '&#127969;', 'commercial': '&#127963;', 'land': '&#127795;' };
-return icons[(type || '').toLowerCase()] || '&#127968;';
-}
-
-// Logout
-async function handleLogout() {
-await supabase.auth.signOut();
-dashboardPage.classList.add('hidden');
-loginPage.classList.remove('hidden');
-emailInput.value = '';
-passwordInput.value = '';
-}
-</script>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        const App = () => {
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            
+            return (
+                <div className="app">
+                    <Navigation mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
+                    <Hero />
+                    <PainSection />
+                    <SolutionSection />
+                    <FeaturesSection />
+                    <SolicitorsSection />
+                    <StatsSection />
+                    <Testimonials />
+                    <CTASection />
+                    <Footer />
+                </div>
+            );
+        };
+        
+        const Navigation = ({ mobileMenuOpen, setMobileMenuOpen }) => {
+            return (
+                <nav className="navigation">
+                    <div className="nav-container">
+                        <div className="logo">
+                            <div className="logo-icons">
+                                <svg className="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <svg className="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </div>
+                            <span className="logo-text">
+                                documove<span className="co-uk">.co.uk</span>
+                            </span>
+                        </div>
+                        
+                        <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+                            <a className="nav-link" href="#how-it-works">How It Works</a>
+                            <a className="nav-link" href="#proof">Proof</a>
+                            <button className="login-btn">Get Started Free</button>
+                        </div>
+                        
+                        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                            {mobileMenuOpen ? '✕' : '☰'}
+                        </button>
+                    </div>
+                </nav>
+            );
+        };
+        
+        const Hero = () => {
+            return (
+                <section className="hero">
+                    <div className="hero-content">
+                        <div className="hero-eyebrow">FOR UK ESTATE AGENTS</div>
+                        
+                        <h1>Your team is drowning in admin.</h1>
+                        
+                        <p className="hero-subhead">
+                            Stop being the middleman between solicitors, buyers, and sellers.
+                        </p>
+                        
+                        <p className="hero-tagline">
+                            documove gives everyone real-time visibility of the entire transaction. 
+                            Your clients stay happy. Your team stays productive. You earn passive revenue from every completion.
+                        </p>
+                        
+                        <div className="cta-group">
+                            <button className="btn-primary">
+                                Get Started Free
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                            <button className="btn-secondary">See How It Works</button>
+                        </div>
+                        
+                        <p className="hero-note">
+                            <strong>100% free for estate agents.</strong> No contracts. Cancel anytime.
+                        </p>
+                    </div>
+                    
+                    <DashboardPreview />
+                </section>
+            );
+        };
+        
+        const DashboardPreview = () => {
+            return (
+                <div className="dashboard-preview">
+                    <div className="dashboard-preview-label">
+                        <div className="preview-badge">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            LIVE PREVIEW
+                        </div>
+                        <div className="preview-title">Your Dashboard</div>
+                        <div className="preview-subtitle">This is what you'll see when you log in</div>
+                    </div>
+                    
+                    <div className="dashboard-card">
+                        <div className="browser-chrome">
+                            <div className="browser-dots">
+                                <div className="browser-dot dot-red"></div>
+                                <div className="browser-dot dot-yellow"></div>
+                                <div className="browser-dot dot-green"></div>
+                            </div>
+                            <div className="browser-url">app.documove.co.uk/dashboard</div>
+                        </div>
+                        <iframe 
+                            src="agent-dashboard.html" 
+                            className="dashboard-frame"
+                            title="Agent Dashboard Preview"
+                        />
+                    </div>
+                </div>
+            );
+        };
+        
+        const PainSection = () => {
+            const pains = [
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                    ),
+                    title: "Endless chasing",
+                    description: "Hours wasted calling solicitors for updates you shouldn't need to chase"
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    ),
+                    title: "Anxious clients",
+                    description: "Buyers and sellers constantly asking \"what's happening?\""
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    ),
+                    title: "Lost paperwork",
+                    description: "Documents in email chains, WhatsApp, and filing cabinets"
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                    ),
+                    title: "Lost revenue",
+                    description: "Can't take on more properties because your team is at capacity"
+                }
+            ];
+            
+            return (
+                <section className="pain-section">
+                    <div className="pain-container">
+                        <div className="section-header">
+                            <div className="section-eyebrow">SOUND FAMILIAR?</div>
+                            <h2 className="section-title">You're working harder,<br/>not smarter.</h2>
+                            <p className="section-subtitle">
+                                Your agents spend more time managing transactions than actually selling. 
+                                There's a better way.
+                            </p>
+                        </div>
+                        
+                        <div className="pain-grid">
+                            {pains.map((pain, index) => (
+                                <div key={index} className="pain-card">
+                                    <div className="pain-icon">{pain.icon}</div>
+                                    <h3 className="pain-title">{pain.title}</h3>
+                                    <p className="pain-text">{pain.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const SolutionSection = () => {
+            const steps = [
+                {
+                    title: "Add property & invite clients",
+                    description: "Upload property details and photos. Invite buyer and seller from your dashboard. They get instant access to their transaction page."
+                },
+                {
+                    title: "Solicitors get connected",
+                    description: "Your clients choose from our pre-approved panel. Or you invite your own trusted solicitors directly from your dashboard. Total flexibility."
+                },
+                {
+                    title: "Everyone stays in sync",
+                    description: "Solicitors update progress. Buyers, sellers, and you see it live. Documents shared. Tasks tracked. Zero chasing. Plus, solicitors get free PDF conversion and digital signing software built right in."
+                }
+            ];
+            
+            return (
+                <section className="solution-section" id="how-it-works">
+                    <div className="solution-container">
+                        <div className="solution-header">
+                            <h2>Here's how documove<br/>works for YOU</h2>
+                            <p>Three simple steps. Zero admin overhead. Total transparency.</p>
+                        </div>
+                        
+                        <div className="solution-steps">
+                            {steps.map((step, index) => (
+                                <div key={index} className="solution-step">
+                                    <div className="step-number">{index + 1}</div>
+                                    <h3>{step.title}</h3>
+                                    <p>{step.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const FeaturesSection = () => {
+            const features = [
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    ),
+                    title: "Real-time messaging",
+                    description: "Buyers, sellers, solicitors, and you - all connected. Ask questions, share updates, request documents. No more email chains or missed WhatsApps."
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    ),
+                    title: "Document management",
+                    description: "All transaction documents in one secure place. Upload, share, track. Everyone sees what they need, when they need it."
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                        </svg>
+                    ),
+                    title: "Live progress tracking",
+                    description: "See exactly where each transaction stands. Tasks completed, milestones reached, what's next. Total visibility for everyone."
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    ),
+                    title: "Smart notifications",
+                    description: "Get alerted when documents are uploaded, tasks completed, or action needed. Stay informed without staying glued to the dashboard."
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    ),
+                    title: "Digital signatures",
+                    description: "Built-in e-signature and PDF conversion. Solicitors can get documents signed without leaving the platform. Faster, simpler, secure."
+                },
+                {
+                    icon: (
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    ),
+                    title: "Bank-level security",
+                    description: "256-bit encryption, secure access controls, UK-based data storage. Your clients' information is protected."
+                }
+            ];
+            
+            return (
+                <section className="features-section">
+                    <div className="features-container">
+                        <div className="section-header">
+                            <div className="section-eyebrow">WHAT'S INCLUDED</div>
+                            <h2 className="section-title">Everything you need.<br/>Nothing you don't.</h2>
+                            <p className="section-subtitle">
+                                Built specifically for UK residential property transactions. No bloat. Just the features that actually matter.
+                            </p>
+                        </div>
+                        
+                        <div className="features-grid">
+                            {features.map((feature, index) => (
+                                <div key={index} className="feature-card">
+                                    <div className="feature-icon-wrapper">
+                                        <div className="feature-icon">{feature.icon}</div>
+                                    </div>
+                                    <h3 className="feature-title">{feature.title}</h3>
+                                    <p className="feature-text">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const SolicitorsSection = () => {
+            const benefits = [
+                {
+                    title: "Bring your own solicitors",
+                    description: "Invite your trusted solicitors or licensed conveyancers directly from your dashboard. Keep the relationships that work."
+                },
+                {
+                    title: "Or use our pre-approved panel",
+                    description: "Your clients can choose from our vetted solicitors. Quality-checked and ready to go."
+                },
+                {
+                    title: "Free tools included",
+                    description: "PDF conversion and digital signing software included. No extra costs. Makes their job easier."
+                },
+                {
+                    title: "Everyone wins",
+                    description: "Updates flow automatically. No more chasing. Faster completions. Happier clients."
+                }
+            ];
+            
+            return (
+                <section className="solicitors-section">
+                    <div className="solicitors-container">
+                        <div className="solicitors-content">
+                            <div className="solicitors-text">
+                                <h2>Your solicitors. Your choice.</h2>
+                                <p>
+                                    <span className="highlight">Invite your trusted solicitors</span> directly from your dashboard. They get a simpler workflow. You keep the relationships that work.
+                                </p>
+                                <p>
+                                    Or let your clients choose from our <span className="highlight">pre-approved panel</span> of quality solicitors.
+                                </p>
+                                <p>
+                                    Either way, everyone gets real-time visibility. No more playing telephone. No more chasing updates.
+                                </p>
+                            </div>
+                            
+                            <div className="solicitors-benefits">
+                                <h3>How it works:</h3>
+                                {benefits.map((benefit, index) => (
+                                    <div key={index} className="benefit-item">
+                                        <svg className="benefit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 5l7 7" />
+                                        </svg>
+                                        <div className="benefit-content">
+                                            <h4>{benefit.title}</h4>
+                                            <p>{benefit.description}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const StatsSection = () => {
+            return (
+                <section className="stats-section">
+                    <div className="stats-container">
+                        <div className="stat">
+                            <div className="stat-number">70%</div>
+                            <div className="stat-label">Fewer phone calls</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-number">50%</div>
+                            <div className="stat-label">More properties per agent</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-number">40%</div>
+                            <div className="stat-label">Faster completions</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-number">95%</div>
+                            <div className="stat-label">Client satisfaction</div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const Testimonials = () => {
+            const testimonials = [
+                {
+                    quote: "We were drowning in admin. Now we're handling 50% more properties with the same team. The platform pays for itself in time saved alone.",
+                    author: "Sarah Mitchell",
+                    role: "Director, Mitchell & Co Estate Agents",
+                    impact: "50% increase in capacity with same team size"
+                },
+                {
+                    quote: "Our clients used to call 3-4 times a week asking for updates. Now they just check documove. My agents are actually selling again instead of playing telephone.",
+                    author: "James Robertson",
+                    role: "Managing Director, Robertson Properties",
+                    impact: "70% reduction in client service calls"
+                },
+                {
+                    quote: "The difference is night and day. Transactions move faster, clients are happier, and we're making money on every completion. Absolute no-brainer.",
+                    author: "Emma Thompson",
+                    role: "Branch Manager, Thompson & Partners",
+                    impact: "40% faster average completion times"
+                }
+            ];
+            
+            return (
+                <section className="testimonials" id="proof">
+                    <div className="testimonials-container">
+                        <div className="section-header">
+                            <div className="section-eyebrow">REAL RESULTS</div>
+                            <h2 className="section-title">Don't take our word for it</h2>
+                            <p className="section-subtitle">
+                                These agents were skeptical too. Now they wouldn't go back.
+                            </p>
+                        </div>
+                        
+                        <div className="testimonials-grid">
+                            {testimonials.map((testimonial, index) => (
+                                <div key={index} className="testimonial-card">
+                                    <p className="testimonial-quote">"{testimonial.quote}"</p>
+                                    <div className="testimonial-author">{testimonial.author}</div>
+                                    <div className="testimonial-role">{testimonial.role}</div>
+                                    <div className="testimonial-impact">⚡ {testimonial.impact}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        const CTASection = () => {
+            return (
+                <section className="cta-section">
+                    <div className="cta-container">
+                        <h2 className="cta-title">Start free today.<br/>No risk. Just results.</h2>
+                        <p className="cta-text">
+                            Set up your first property in 5 minutes. Free forever. No credit card. 
+                            If it doesn't save you time and make your clients happier, you've lost nothing.
+                        </p>
+                        <div className="cta-buttons">
+                            <button className="btn-primary">
+                                Start Your Free Trial
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                            <button className="btn-secondary">Book a 10-Minute Demo</button>
+                        </div>
+                        <p className="cta-note">
+                            Set up in under 5 minutes. <strong>Free forever for estate agents.</strong>
+                        </p>
+                    </div>
+                </section>
+            );
+        };
+        
+        const Footer = () => {
+            return (
+                <footer className="footer">
+                    <div className="footer-container">
+                        <div className="footer-brand">
+                            <div className="logo">
+                                <div className="logo-icons">
+                                    <svg className="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <svg className="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                    </svg>
+                                </div>
+                                <span className="logo-text">
+                                    documove<span className="co-uk">.co.uk</span>
+                                </span>
+                            </div>
+                            <p className="footer-tagline">
+                                Stop chasing. Start earning. Free for UK estate agents.
+                            </p>
+                        </div>
+                        
+                        <div className="footer-section">
+                            <h4>Product</h4>
+                            <div className="footer-links">
+                                <a className="footer-link">How It Works</a>
+                                <a className="footer-link">Referral Earnings</a>
+                                <a className="footer-link">Security</a>
+                            </div>
+                        </div>
+                        
+                        <div className="footer-section">
+                            <h4>Company</h4>
+                            <div className="footer-links">
+                                <a className="footer-link">About</a>
+                                <a className="footer-link">Contact</a>
+                                <a className="footer-link">Support</a>
+                            </div>
+                        </div>
+                        
+                        <div className="footer-section">
+                            <h4>Legal</h4>
+                            <div className="footer-links">
+                                <a className="footer-link">Privacy</a>
+                                <a className="footer-link">Terms</a>
+                                <a className="footer-link">GDPR</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="footer-bottom">
+                        © 2025 documove. All rights reserved.
+                    </div>
+                </footer>
+            );
+        };
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
