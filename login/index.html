@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documove - Sign In</title>
+<link rel="stylesheet" href="../css/design-system.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary, #F7FAFC); color: var(--text-primary, #2D3748); }
+
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg-primary, #F7FAFC); }
+.login-box { background: white; padding: 2.5rem; border-radius: 16px; border: 1px solid var(--border, #E2E8F0); width: 100%; max-width: 420px; }
+.login-box h2 { text-align: center; margin-bottom: 0.5rem; font-size: 1.5rem; }
+.login-box .subtitle { text-align: center; color: var(--text-secondary, #718096); margin-bottom: 2rem; font-size: 0.9rem; }
+.brand-dot { display: inline-block; width: 10px; height: 10px; background: var(--primary, #00D9B5); border-radius: 50%; margin-right: 0.25rem; }
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.875rem; }
+.form-group input { width: 100%; padding: 0.7rem; border: 1px solid var(--border, #E2E8F0); border-radius: 8px; font-size: 0.95rem; }
+.form-group input:focus { outline: none; border-color: var(--primary, #00D9B5); box-shadow: 0 0 0 3px rgba(0,217,181,0.1); }
+.btn-login { width: 100%; padding: 0.75rem; background: var(--primary, #00D9B5); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+.btn-login:hover { background: var(--primary-dark, #00BFA0); }
+.btn-login:disabled { background: #CBD5E0; cursor: not-allowed; }
+.error-msg { color: var(--error, #FC8181); text-align: center; margin-top: 1rem; font-size: 0.85rem; display: none; }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-box">
+    <h2><span class="brand-dot"></span> documove</h2>
+    <p class="subtitle">Sign in to your account</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="you@company.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+      <p class="error-msg" id="errorMsg"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+// Supabase Configuration
+const SUPABASE_URL = 'https://hvbhmsybnhowczokidnc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2Ymhtc3libmhvd2N6b2tpZG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI2NTAsImV4cCI6MjA4NjQ5ODY1MH0.60TDi3r-vRhXwnWXH_JY7e5mKZ9GbaHI14cLYowZReA';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Check existing session
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) await redirectByRole(session.user);
+}
+checkSession();
+
+// Determine role and redirect
+async function redirectByRole(user) {
+  try {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    const role = profile ? profile.role : 'agent';
+    switch(role) {
+      case 'solicitor': window.location.href = '/app/solicitor'; break;
+      case 'buyer': case 'seller': window.location.href = '/app/track'; break;
+      default: window.location.href = '/app/agent'; break;
+    }
+  } catch(e) {
+    window.location.href = '/app/agent';
+  }
+}
+
+// Login
+const loginForm = document.getElementById('loginForm');
+const loginBtn = document.getElementById('loginBtn');
+const errorMsg = document.getElementById('errorMsg');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Signing in...';
+  errorMsg.style.display = 'none';
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    });
+    if (error) throw error;
+    await redirectByRole(data.user);
+  } catch (error) {
+    errorMsg.textContent = error.message;
+    errorMsg.style.display = 'block';
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Sign In';
+  }
+});
+</script>
+</body>
+</html>
