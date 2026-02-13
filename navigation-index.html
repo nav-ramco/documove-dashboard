@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>documove - Development Navigation</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Outfit', sans-serif; background: #F7FAFC; padding: 2rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { font-size: 2.5rem; font-weight: 800; color: #2D3748; margin-bottom: 0.5rem; }
+.subtitle { color: #718096; margin-bottom: 3rem; font-size: 1.1rem; }
+.section { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+.section-title { font-size: 1.5rem; font-weight: 700; color: #2D3748; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+.link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+.link-card { padding: 1.25rem; border: 1px solid #E2E8F0; border-radius: 8px; transition: all 0.2s; text-decoration: none; display: block; }
+.link-card:hover { border-color: #00D9B5; box-shadow: 0 4px 12px rgba(0, 217, 181, 0.15); transform: translateY(-2px); }
+.link-title { font-weight: 700; color: #2D3748; margin-bottom: 0.5rem; font-size: 1.1rem; }
+.link-desc { color: #718096; font-size: 0.9rem; margin-bottom: 0.75rem; }
+.link-path { font-family: 'Courier New', monospace; font-size: 0.85rem; color: #00D9B5; background: rgba(0, 217, 181, 0.1); padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; }
+.badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-left: 0.5rem; }
+.badge-public { background: #F0FFF4; color: #48BB78; }
+.badge-protected { background: #FFF5F5; color: #FC8181; }
+.badge-feature { background: #EBF8FF; color: #4299E1; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>documove - Development Nav</h1>
+<p class="subtitle">All pages and navigation links for testing</p>
+
+<div class="section">
+<h2 class="section-title">Public Pages</h2>
+<div class="link-grid">
+<a href="index.html" class="link-card">
+<div class="link-title">Marketing Homepage</div>
+<div class="link-desc">Main landing page with hero, features, pricing</div>
+<div class="link-path">/</div>
+<span class="badge badge-public">Public</span>
+</a>
+<a href="login/" class="link-card">
+<div class="link-title">Unified Login</div>
+<div class="link-desc">One login for all user types (Agent/Solicitor/Buyer/Seller)</div>
+<div class="link-path">/login</div>
+<span class="badge badge-public">Public</span>
+</a>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section-title">App Pages (Protected)</h2>
+<div class="link-grid">
+<a href="app/agent.html" class="link-card">
+<div class="link-title">Agent Dashboard</div>
+<div class="link-desc">Estate agent case management</div>
+<div class="link-path">/app/agent</div>
+<span class="badge badge-protected">Auth Required</span>
+</a>
+<a href="app/solicitor.html" class="link-card">
+<div class="link-title">Solicitor Dashboard</div>
+<div class="link-desc">Conveyancer case management with task checklists</div>
+<div class="link-path">/app/solicitor</div>
+<span class="badge badge-protected">Auth Required</span>
+</a>
+<a href="app/track.html" class="link-card">
+<div class="link-title">Buyer/Seller Portal</div>
+<div class="link-desc">Client property tracking (PIN login)</div>
+<div class="link-path">/app/track</div>
+<span class="badge badge-protected">PIN Required</span>
+</a>
+</div>
+</div>
+
+<div class="section">
+<h2 class="section-title">File Mapping</h2>
+<div style="background: #EDF2F7; padding: 1.5rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.8;">
+<strong>Current Filename</strong> → <strong>URL</strong><br>
+index.html → /<br>
+login/index.html → /login<br>
+app/agent.html → /app/agent<br>
+app/agent/index.html → /app/agent<br>
+app/solicitor.html → /app/solicitor<br>
+app/solicitor/index.html → /app/solicitor<br>
+app/track.html → /app/track<br>
+app/track/index.html → /app/track
+</div>
+</div>
+
+<div style="background: rgba(255, 184, 0, 0.1); border: 1px solid #FFB800; color: #975A16; padding: 1rem; border-radius: 8px; margin-top: 2rem; font-size: 0.9rem;">
+<strong>Development Mode:</strong> This navigation page is for development/testing only. In production, users will access via the marketing homepage → login → their specific dashboard.
+</div>
+</div>
+</body>
+</html>
