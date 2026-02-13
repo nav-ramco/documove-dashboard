@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documove - Agent Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+.header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 1.5rem; }
+.header .user-info { display: flex; align-items: center; gap: 1rem; }
+.header .user-info span { font-size: 0.9rem; opacity: 0.8; }
+.header button { background: #e94560; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+.header button:hover { background: #c73e55; }
+
+/* Login Page */
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+.login-box { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 420px; }
+.login-box h2 { text-align: center; margin-bottom: 0.5rem; color: #1a1a2e; font-size: 1.8rem; }
+.login-box .subtitle { text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; color: #444; font-size: 0.9rem; }
+.form-group input { width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+.form-group input:focus { outline: none; border-color: #e94560; }
+.btn-login { width: 100%; padding: 0.85rem; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.btn-login:hover { background: #c73e55; }
+.btn-login:disabled { background: #ccc; cursor: not-allowed; }
+.error-msg { color: #e94560; text-align: center; margin-top: 1rem; font-size: 0.9rem; display: none; }
+.logo { text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; }
+
+/* Dashboard */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+.stat-card h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+.stat-card .value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+.stat-card .change { font-size: 0.85rem; color: #27ae60; margin-top: 0.3rem; }
+
+.section-title { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-bottom: 1rem; }
+.properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
+.property-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; }
+.property-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+.property-image { height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; }
+.property-details { padding: 1.25rem; }
+.property-details h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: #1a1a2e; }
+.property-details .address { color: #666; font-size: 0.9rem; margin-bottom: 0.8rem; }
+.property-details .meta { display: flex; gap: 1rem; font-size: 0.85rem; color: #888; }
+.property-details .price { font-size: 1.3rem; font-weight: 700; color: #e94560; margin-top: 0.8rem; }
+.property-details .status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; }
+.status-active { background: #e8f5e9; color: #2e7d32; }
+.status-pending { background: #fff3e0; color: #ef6c00; }
+.status-sold { background: #fce4ec; color: #c62828; }
+
+.empty-state { text-align: center; padding: 4rem 2rem; color: #888; }
+.empty-state .icon { font-size: 4rem; margin-bottom: 1rem; }
+.hidden { display: none !important; }
+.loading { text-align: center; padding: 2rem; color: #888; }
+</style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+<div class="login-box">
+<div class="logo">&#127968;</div>
+<h2>Documove</h2>
+<p class="subtitle">Agent Dashboard - Sign In</p>
+<form id="loginForm">
+<div class="form-group">
+<label for="email">Email Address</label>
+<input type="email" id="email" placeholder="agent@company.com" required>
+</div>
+<div class="form-group">
+<label for="password">Password</label>
+<input type="password" id="password" placeholder="Enter your password" required>
+</div>
+<button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+<p class="error-msg" id="errorMsg"></p>
+</form>
+</div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardPage" class="hidden">
+<header class="header">
+<h1>&#127968; Documove</h1>
+<div class="user-info">
+<span id="userEmail"></span>
+<span id="userAgency"></span>
+<button onclick="handleLogout()">Sign Out</button>
+</div>
+</header>
+
+<div class="container">
+<div class="stats-grid">
+<div class="stat-card">
+<h3>Total Properties</h3>
+<div class="value" id="totalProperties">0</div>
+</div>
+<div class="stat-card">
+<h3>Active Listings</h3>
+<div class="value" id="activeListings">0</div>
+</div>
+<div class="stat-card">
+<h3>Pending</h3>
+<div class="value" id="pendingCount">0</div>
+</div>
+<div class="stat-card">
+<h3>Completed</h3>
+<div class="value" id="completedCount">0</div>
+</div>
+</div>
+
+<h2 class="section-title">Your Properties</h2>
+<div id="propertiesList" class="properties-grid">
+<div class="loading">Loading properties...</div>
+</div>
+</div>
+</div>
+
+<script>
+// Supabase Configuration
+const SUPABASE_URL = 'https://hvbhmsybnhowczokidnc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2Ymhtc3libmhvd2N6b2tpZG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI2NTAsImV4cCI6MjA4NjQ5ODY1MH0.60TDi3r-vRhXwnWXH_JY7e5mKZ9GbaHI14cLYowZReA';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// DOM Elements
+const loginPage = document.getElementById('loginPage');
+const dashboardPage = document.getElementById('dashboardPage');
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const errorMsg = document.getElementById('errorMsg');
+const userEmailSpan = document.getElementById('userEmail');
+const userAgencySpan = document.getElementById('userAgency');
+const propertiesList = document.getElementById('propertiesList');
+
+// Check for existing session on load
+async function checkSession() {
+const { data: { session } } = await supabase.auth.getSession();
+if (session) {
+await showDashboard(session.user);
+}
+}
+checkSession();
+
+// Login Handler
+loginForm.addEventListener('submit', async (e) => {
+e.preventDefault();
+loginBtn.disabled = true;
+loginBtn.textContent = 'Signing in...';
+errorMsg.style.display = 'none';
+
+try {
+const { data, error } = await supabase.auth.signInWithPassword({
+email: emailInput.value,
+password: passwordInput.value
+});
+
+if (error) throw error;
+await showDashboard(data.user);
+} catch (error) {
+errorMsg.textContent = error.message;
+errorMsg.style.display = 'block';
+} finally {
+loginBtn.disabled = false;
+loginBtn.textContent = 'Sign In';
+}
+});
+
+// Show Dashboard
+async function showDashboard(user) {
+loginPage.classList.add('hidden');
+dashboardPage.classList.remove('hidden');
+userEmailSpan.textContent = user.email;
+
+// Load profile
+try {
+const { data: profile } = await supabase
+.from('profiles')
+.select('*')
+.eq('id', user.id)
+.single();
+
+if (profile && profile.company_name) {
+userAgencySpan.textContent = '| ' + profile.company_name;
+}
+} catch (e) {
+console.log('Profile load error:', e);
+}
+
+// Load properties
+await loadProperties(user.id);
+}
+
+// Load Properties
+async function loadProperties(userId) {
+try {
+const { data: properties, error } = await supabase
+.from('properties')
+.select('*')
+.eq('agent_id', userId)
+.order('created_at', { ascending: false });
+
+if (error) throw error;
+
+// Update stats
+const total = properties ? properties.length : 0;
+const active = properties ? properties.filter(p => p.status === 'active').length : 0;
+const pending = properties ? properties.filter(p => p.status === 'on_track' || p.status === 'urgent' || p.status === 'awaiting_client').length : 0;
+const completed = properties ? properties.filter(p => p.status === 'exchanged' || p.status === 'completed' || p.status === 'archived').length : 0;
+
+document.getElementById('totalProperties').textContent = total;
+document.getElementById('activeListings').textContent = active;
+document.getElementById('pendingCount').textContent = pending;
+document.getElementById('completedCount').textContent = completed;
+
+// Render properties
+if (!properties || properties.length === 0) {
+propertiesList.innerHTML = '<div class="empty-state"><div class="icon">&#128204;</div><h3>No Properties Yet</h3><p>Properties assigned to your account will appear here.</p></div>';
+return;
+}
+
+propertiesList.innerHTML = properties.map(property => {
+const statusClass = property.status === 'active' ? 'status-active' : property.status === 'exchanged' || property.status === 'completed' || property.status === 'archived' ? 'status-sold' : 'status-pending';
+const price = property.price ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(property.price) : 'Price TBC';
+const bedrooms = property.bedrooms ? property.bedrooms + ' bed' : '';
+const bathrooms = property.bathrooms ? property.bathrooms + ' bath' : '';
+const propertyType = property.property_type || 'Residential';
+
+return `
+<div class="property-card">
+<div class="property-image">${getPropertyIcon(property.property_type)}</div>
+<div class="property-details">
+<h3>${property.address || 'Property'}</h3>
+<p class="address">${property.postcode || ''}</p>
+<div class="meta">
+<span>${propertyType}</span>
+${bedrooms ? '<span>' + bedrooms + '</span>' : ''}
+${bathrooms ? '<span>' + bathrooms + '</span>' : ''}
+</div>
+<div class="price">${price}</div>
+<span class="status ${statusClass}">${(property.status || 'active').replace('_', ' ').toUpperCase()}</span>
+</div>
+</div>`;
+}).join('');
+
+} catch (error) {
+console.error('Error loading properties:', error);
+propertiesList.innerHTML = '<div class="empty-state"><div class="icon">&#9888;</div><h3>Error Loading Properties</h3><p>' + error.message + '</p></div>';
+}
+}
+
+function getPropertyIcon(type) {
+const icons = { 'house': '&#127968;', 'flat': '&#127970;', 'apartment': '&#127970;', 'bungalow': '&#127969;', 'commercial': '&#127963;', 'land': '&#127795;' };
+return icons[(type || '').toLowerCase()] || '&#127968;';
+}
+
+// Logout
+async function handleLogout() {
+await supabase.auth.signOut();
+dashboardPage.classList.add('hidden');
+loginPage.classList.remove('hidden');
+emailInput.value = '';
+passwordInput.value = '';
+}
+</script>
+</body>
+</html>
