@@ -1,0 +1,89 @@
+========================================
+  DOCUMOVE - START HERE
+  Quick Reference Guide
+========================================
+
+WEBSITE: https://documove.co.uk
+REPO: https://github.com/nav-ramco/documove-dashboard
+HOSTING: GitHub Pages (main branch)
+DOMAIN: documove.co.uk (GoDaddy DNS)
+BACKEND: Supabase (Auth + Database)
+
+========================================
+  LIVE URLS
+========================================
+
+Marketing Homepage:  https://documove.co.uk
+Login Page:          https://documove.co.uk/login
+Agent Dashboard:     https://documove.co.uk/app/agent
+Solicitor Dashboard: https://documove.co.uk/app/solicitor
+Buyer/Seller Portal: https://documove.co.uk/app/track
+
+========================================
+  KEY FILES
+========================================
+
+index.html              -> Marketing landing page (/)
+agent-dashboard.html    -> Agent dashboard (reference)
+app/agent.html          -> Agent dashboard (deployed)
+app/solicitor.html      -> Solicitor dashboard (deployed)
+app/track.html          -> Buyer/Seller portal (deployed)
+css/design-system.css   -> Shared styles & design tokens
+
+========================================
+  DOCUMENTATION
+========================================
+
+STYLE-GUIDE.md          -> Design system reference
+FILE-STRUCTURE.md       -> File routing & mapping
+START-HERE.txt          -> This file
+
+========================================
+  SUPABASE SETUP
+========================================
+
+Project: Documove
+Auth: Email/password enabled
+Tables: profiles, properties
+RLS: Enabled on all tables
+
+Test User:
+  Email: test@cooperandtanner.com
+  Role: agent
+
+========================================
+  DEPLOYMENT
+========================================
+
+1. Edit files in GitHub (main branch)
+2. GitHub Pages auto-deploys on commit
+3. Changes go live within 1-2 minutes
+4. Custom domain: documove.co.uk
+
+DNS Configuration (GoDaddy):
+  A Records -> GitHub Pages IPs
+  CNAME -> nav-ramco.github.io
+
+========================================
+  DESIGN SYSTEM
+========================================
+
+Brand Color: #00D9B5 (teal/green)
+Font: Outfit (Google Fonts)
+Sidebar: #0F1419 (navy)
+Icons: Heroicons (SVG)
+CSS: css/design-system.css
+
+========================================
+  NEXT STEPS
+========================================
+
+1. Build login.html (unified auth page)
+2. Connect Supabase auth to dashboards
+3. Add solicitor dashboard features
+4. Build buyer/seller tracking portal
+5. Implement document upload (app/documents)
+6. Add messaging (app/messages)
+7. E-signature integration (app/sign)
+
+========================================
