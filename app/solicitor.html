@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documove - Solicitor Dashboard</title>
+<link rel="stylesheet" href="../css/design-system.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary, #F7FAFC); color: var(--text-primary, #2D3748); }
+
+/* Sidebar */
+.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: var(--sidebar-bg, #0F1419); color: white; padding: 1.5rem; display: flex; flex-direction: column; z-index: 100; }
+.sidebar-logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+.sidebar-logo .brand-dot { width: 10px; height: 10px; background: var(--primary, #00D9B5); border-radius: 50%; }
+.sidebar-nav { flex: 1; }
+.sidebar-nav a { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.9rem; margin-bottom: 0.25rem; transition: all 0.2s; }
+.sidebar-nav a:hover { background: rgba(255,255,255,0.08); color: white; }
+.sidebar-nav a.active { background: rgba(0,217,181,0.15); color: var(--primary, #00D9B5); }
+.sidebar-user { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+.sidebar-user .user-email { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user .btn-logout { width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+.sidebar-user .btn-logout:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* Main Content */
+.main-content { margin-left: 260px; padding: 2rem; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-header h1 { font-size: 1.75rem; font-weight: 700; }
+.page-header .header-actions { display: flex; gap: 0.75rem; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: white; padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border, #E2E8F0); }
+.stat-card h3 { font-size: 0.75rem; color: var(--text-secondary, #718096); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+.stat-card .value { font-size: 1.75rem; font-weight: 700; color: var(--text-primary, #2D3748); }
+.stat-card .change { font-size: 0.8rem; margin-top: 0.25rem; }
+.change-positive { color: var(--success, #48BB78); }
+.change-negative { color: var(--error, #FC8181); }
+
+/* Cases Table */
+.section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+.cases-table { width: 100%; background: white; border-radius: 12px; border: 1px solid var(--border, #E2E8F0); overflow: hidden; }
+.cases-table thead { background: #F7FAFC; }
+.cases-table th { text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem; color: var(--text-secondary, #718096); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.cases-table td { padding: 0.875rem 1rem; border-top: 1px solid var(--border, #E2E8F0); font-size: 0.9rem; }
+.cases-table tr:hover { background: #F7FAFC; }
+
+/* Status Badges */
+.badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.badge-active { background: #F0FFF4; color: #276749; }
+.badge-awaiting { background: #FFFFF0; color: #975A16; }
+.badge-review { background: #EBF8FF; color: #2B6CB0; }
+.badge-completed { background: #F0FFF4; color: #22543D; }
+.badge-urgent { background: #FFF5F5; color: #C53030; }
+
+/* Buttons */
+.btn-primary { background: var(--primary, #00D9B5); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.btn-primary:hover { background: var(--primary-dark, #00BFA0); }
+.btn-secondary { background: white; color: var(--text-primary, #2D3748); border: 1px solid var(--border, #E2E8F0); padding: 0.6rem 1.25rem; border-radius: 8px; font-size: 0.9rem; cursor: pointer; }
+.btn-secondary:hover { background: #F7FAFC; }
+
+/* Login */
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg-primary, #F7FAFC); }
+.login-box { background: white; padding: 2.5rem; border-radius: 16px; border: 1px solid var(--border, #E2E8F0); width: 100%; max-width: 420px; }
+.login-box h2 { text-align: center; margin-bottom: 0.5rem; font-size: 1.5rem; }
+.login-box .subtitle { text-align: center; color: var(--text-secondary, #718096); margin-bottom: 2rem; font-size: 0.9rem; }
+.form-group { margin-bottom: 1.2rem; }
+.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.875rem; }
+.form-group input { width: 100%; padding: 0.7rem; border: 1px solid var(--border, #E2E8F0); border-radius: 8px; font-size: 0.95rem; }
+.form-group input:focus { outline: none; border-color: var(--primary, #00D9B5); box-shadow: 0 0 0 3px rgba(0,217,181,0.1); }
+.btn-login { width: 100%; padding: 0.75rem; background: var(--primary, #00D9B5); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+.btn-login:hover { background: var(--primary-dark, #00BFA0); }
+.btn-login:disabled { background: #CBD5E0; cursor: not-allowed; }
+.error-msg { color: var(--error, #FC8181); text-align: center; margin-top: 1rem; font-size: 0.85rem; display: none; }
+
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-secondary, #718096); }
+.hidden { display: none !important; }
+.loading { text-align: center; padding: 2rem; color: var(--text-secondary, #718096); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+  <div class="login-box">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <span style="display:inline-flex;align-items:center;gap:0.5rem;font-size:1.5rem;font-weight:700;">
+        <span style="width:10px;height:10px;background:#00D9B5;border-radius:50%;display:inline-block;"></span>
+        documove
+      </span>
+    </div>
+    <h2>Solicitor Portal</h2>
+    <p class="subtitle">Sign in to manage your conveyancing cases</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="solicitor@firm.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+      <p class="error-msg" id="errorMsg"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardPage" class="hidden">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="brand-dot"></span> documove
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="#">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Cases
+      </a>
+      <a href="#">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+      </a>
+      <a href="#">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        Documents
+      </a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-email" id="userEmail"></div>
+      <button class="btn-logout" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Solicitor Dashboard</h1>
+      <div class="header-actions">
+        <button class="btn-secondary">Export</button>
+        <button class="btn-primary">New Case</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Cases</h3>
+        <div class="value" id="totalCases">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Active</h3>
+        <div class="value" id="activeCases">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Awaiting Docs</h3>
+        <div class="value" id="awaitingDocs">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Completed</h3>
+        <div class="value" id="completedCases">0</div>
+      </div>
+    </div>
+
+    <!-- Cases Table -->
+    <h2 class="section-title">Your Cases</h2>
+    <div id="casesList">
+      <div class="loading">Loading cases...</div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Supabase Configuration
+const SUPABASE_URL = 'https://hvbhmsybnhowczokidnc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2Ymhtc3libmhvd2N6b2tpZG5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MjI2NTAsImV4cCI6MjA4NjQ5ODY1MH0.60TDi3r-vRhXwnWXH_JY7e5mKZ9GbaHI14cLYowZReA';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// DOM Elements
+const loginPage = document.getElementById('loginPage');
+const dashboardPage = document.getElementById('dashboardPage');
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const errorMsg = document.getElementById('errorMsg');
+const userEmailSpan = document.getElementById('userEmail');
+const casesList = document.getElementById('casesList');
+
+// Check for existing session on load
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    await showDashboard(session.user);
+  }
+}
+checkSession();
+
+// Login Handler
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Signing in...';
+  errorMsg.style.display = 'none';
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value,
+      password: passwordInput.value
+    });
+    if (error) throw error;
+    await showDashboard(data.user);
+  } catch (error) {
+    errorMsg.textContent = error.message;
+    errorMsg.style.display = 'block';
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Sign In';
+  }
+});
+
+// Show Dashboard
+async function showDashboard(user) {
+  loginPage.classList.add('hidden');
+  dashboardPage.classList.remove('hidden');
+  userEmailSpan.textContent = user.email;
+  await loadCases(user.id);
+}
+
+// Load Cases (from properties table - solicitor view)
+async function loadCases(userId) {
+  try {
+    const { data: cases, error } = await supabase
+      .from('properties')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Update stats
+    const total = cases ? cases.length : 0;
+    const active = cases ? cases.filter(c => c.status === 'active' || c.status === 'on_track').length : 0;
+    const awaiting = cases ? cases.filter(c => c.status === 'awaiting_client' || c.status === 'urgent').length : 0;
+    const completed = cases ? cases.filter(c => c.status === 'exchanged' || c.status === 'completed' || c.status === 'archived').length : 0;
+
+    document.getElementById('totalCases').textContent = total;
+    document.getElementById('activeCases').textContent = active;
+    document.getElementById('awaitingDocs').textContent = awaiting;
+    document.getElementById('completedCases').textContent = completed;
+
+    // Render cases table
+    if (!cases || cases.length === 0) {
+      casesList.innerHTML = '<div class="empty-state"><h3>No Cases Yet</h3><p>Cases assigned to your firm will appear here.</p></div>';
+      return;
+    }
+
+    let tableHTML = '<table class="cases-table"><thead><tr>';
+    tableHTML += '<th>Property</th><th>Postcode</th><th>Type</th><th>Price</th><th>Status</th><th>Created</th>';
+    tableHTML += '</tr></thead><tbody>';
+
+    cases.forEach(c => {
+      const badgeClass = getBadgeClass(c.status);
+      const price = c.price ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(c.price) : 'TBC';
+      const created = c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '-';
+      const status = (c.status || 'active').replace('_', ' ');
+
+      tableHTML += '<tr>';
+      tableHTML += '<td><strong>' + (c.address || 'Property') + '</strong></td>';
+      tableHTML += '<td>' + (c.postcode || '-') + '</td>';
+      tableHTML += '<td>' + (c.property_type || 'Residential') + '</td>';
+      tableHTML += '<td>' + price + '</td>';
+      tableHTML += '<td><span class="badge ' + badgeClass + '">' + status.toUpperCase() + '</span></td>';
+      tableHTML += '<td>' + created + '</td>';
+      tableHTML += '</tr>';
+    });
+
+    tableHTML += '</tbody></table>';
+    casesList.innerHTML = tableHTML;
+
+  } catch (error) {
+    console.error('Error loading cases:', error);
+    casesList.innerHTML = '<div class="empty-state"><h3>Error Loading Cases</h3><p>' + error.message + '</p></div>';
+  }
+}
+
+function getBadgeClass(status) {
+  switch(status) {
+    case 'active': case 'on_track': return 'badge-active';
+    case 'awaiting_client': return 'badge-awaiting';
+    case 'urgent': return 'badge-urgent';
+    case 'exchanged': case 'completed': case 'archived': return 'badge-completed';
+    default: return 'badge-review';
+  }
+}
+
+// Logout
+async function handleLogout() {
+  await supabase.auth.signOut();
+  dashboardPage.classList.add('hidden');
+  loginPage.classList.remove('hidden');
+  emailInput.value = '';
+  passwordInput.value = '';
+}
+</script>
+</body>
+</html>
