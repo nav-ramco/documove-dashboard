@@ -1189,7 +1189,7 @@
                         <div className={`nav-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                             <a className="nav-link" href="#how-it-works">How It Works</a>
                             <a className="nav-link" href="#proof">Proof</a>
-                            <button className="login-btn">Get Started Free</button>
+                            <a href="/login" className="login-btn">Get Started Free</a>
                         </div>
                         
                         <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -1218,7 +1218,7 @@
                         </p>
                         
                         <div className="cta-group">
-                            <button className="btn-primary">
+                            <button className="btn-primary" onClick={() => window.location.href='/login'}>
                                 Get Started Free
                                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -1666,7 +1666,7 @@
                             If it doesn't save you time and make your clients happier, you've lost nothing.
                         </p>
                         <div className="cta-buttons">
-                            <button className="btn-primary">
+                            <button className="btn-primary" onClick={() => window.location.href='/login'}>
                                 Start Your Free Trial
                                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
